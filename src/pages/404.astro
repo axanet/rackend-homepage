@@ -1,0 +1,25 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Arrow from "../components/icons/Arrow.astro";
+import { SITE } from "../config/site";
+---
+<Base title={`Page not found · ${SITE.name}`} description="This page does not exist.">
+  <Header />
+  <main id="main" class="section notfound">
+    <div class="container">
+      <p class="eyebrow">404</p>
+      <h1>Nothing is served here.</h1>
+      <p class="lead">The page you asked for does not exist, or it moved.</p>
+      <a class="btn btn-primary" href="/">Back to the homepage <Arrow /></a>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .notfound { min-height: 50vh; }
+  h1 { font-size: clamp(2.5rem, 6vw, 4rem); letter-spacing: -0.02em; margin: 12px 0 16px; }
+  .lead { color: var(--fg-muted); font-size: 1.125rem; margin: 0 0 32px; }
+</style>

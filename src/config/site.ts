@@ -3,7 +3,7 @@
 export const SITE = {
   name: "rackend",
   // TODO: final production domain. Used for canonical URLs, sitemap and Open Graph.
-  url: "https://rackend.dev",
+  url: "https://rackend.axanet.ch",
   title: "rackend: your backend in one binary",
   description:
     "Open-source, self-hosted backend in a single Rust binary: database, REST API with access rules, auth with OIDC, file storage and realtime. Backed by SQLite.",
@@ -13,7 +13,7 @@ export const SITE = {
   image: "ghcr.io/axanet/rackend",
   runCommand: "docker run -p 8080:8080 -v rackend_data:/data ghcr.io/axanet/rackend",
   // Optional status badge in the hero, e.g. "Pre-alpha". `null` hides it.
-  status: null as string | null,
+  status: "In Development",
 } as const;
 
 export const LINKS = {

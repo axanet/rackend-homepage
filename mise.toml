@@ -23,3 +23,12 @@ run = "bun run preview"
 [tasks.og]
 description = "Regenerate public/og.png from the hero scene layout (macOS, uses sips)"
 run = "bun scripts/og.ts"
+
+[tasks."docker:build"]
+description = "Build the container image"
+run = "docker build -t rackend-homepage:dev ."
+
+[tasks."docker:run"]
+description = "Serve the container image on http://localhost:8080"
+depends = ["docker:build"]
+run = "docker run --rm -p 8080:8080 rackend-homepage:dev"

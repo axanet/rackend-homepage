@@ -1,0 +1,24 @@
+name: Site issue
+description: A broken link, typo, layout bug or something on the homepage that reads wrong.
+labels: ["site"]
+body:
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: The page or section, and a URL if you have one.
+      placeholder: "Data safety section on the homepage"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+      description: What you saw, and what you expected instead. Screenshots help.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: "Safari 26 on iPhone, Chrome 142 on Linux"

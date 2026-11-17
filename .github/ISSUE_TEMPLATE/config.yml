@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions or bugs in rackend itself
+    url: https://github.com/axanet/rackend/issues
+    about: This repository is only the homepage. Report rackend issues in the main repository.
+  - name: Security vulnerability
+    url: https://github.com/axanet/rackend-homepage/security/advisories/new
+    about: Report security issues privately, not as a public issue.

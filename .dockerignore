@@ -1,0 +1,11 @@
+.git
+.github
+.astro
+.claude
+.DS_Store
+node_modules
+dist
+docs
+*.log
+Dockerfile
+.dockerignore

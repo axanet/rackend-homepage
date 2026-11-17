@@ -1,0 +1,12 @@
+rackend homepage
+Copyright 2026 axanet GmbH
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It bundles the following third-party fonts, which are not covered by the
+Apache License. They are licensed under the SIL Open Font License, Version 1.1,
+and their license texts are included in public/licenses/:
+
+  Redaction 20, Copyright 2019 MCKL Inc. (src/assets/fonts/redaction/)
+  Geist and Geist Mono, Copyright 2024 The Geist Project Authors
+  (via @fontsource-variable/geist and @fontsource-variable/geist-mono)

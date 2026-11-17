@@ -1,0 +1,47 @@
+name: external-prs
+
+# This repository does not accept pull requests from outside the axanet
+# organization (see CONTRIBUTING.md). Close them with a friendly note.
+# pull_request_target runs in the base repository's context; this job never
+# checks out or runs code from the pull request.
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  close:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const author = pr.user.login;
+            if (["OWNER", "MEMBER", "COLLABORATOR"].includes(pr.author_association)) return;
+            // Private org membership is not visible in author_association;
+            // anyone with write access to this repository is a maintainer.
+            try {
+              const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
+                ...context.repo,
+                username: author,
+              });
+              if (["admin", "maintain", "write"].includes(data.permission)) return;
+            } catch (e) {
+              if (e.status !== 404) throw e;
+            }
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: pr.number,
+              body: [
+                `Thanks for taking the time, @${author}.`,
+                "",
+                "This repository does not accept pull requests from outside the axanet organization, so this one is closed automatically. " +
+                  "If you found a problem, please describe it in an issue; we will pick it up from there. " +
+                  `See [CONTRIBUTING.md](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/blob/main/CONTRIBUTING.md) for details.`,
+              ].join("\n"),
+            });
+            await github.rest.pulls.update({ ...context.repo, pull_number: pr.number, state: "closed" });

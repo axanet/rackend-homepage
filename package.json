@@ -2,12 +2,13 @@
   "name": "rackend-homepage",
   "type": "module",
   "private": true,
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "bun --bun astro dev",
     "build": "bun --bun astro check && bun --bun astro build",
     "preview": "bun --bun astro preview",
     "check": "bun --bun astro check",
-    "shaders:check": "bun --bun vgpu check src/visual/solid.wgsl src/visual/flow.wgsl src/visual/ground.wgsl"
+    "shaders:check": "bun --bun vgpu check src/visual/scene.wgsl"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.5",

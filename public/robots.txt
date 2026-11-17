@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rackend.dev/sitemap-index.xml
+Sitemap: https://rackend.axanet.ch/sitemap-index.xml
