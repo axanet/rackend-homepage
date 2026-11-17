@@ -1,0 +1,395 @@
+---
+import { Code } from "astro:components";
+import SectionHead from "./SectionHead.astro";
+import Icon from "./icons/Icon.astro";
+
+const themes = { light: "github-light", dark: "github-dark-dimmed" } as const;
+
+const rules = [
+  { op: "list", expr: `published = true || owner = @request.auth.id` },
+  { op: "view", expr: `published = true || owner = @request.auth.id` },
+  { op: "create", expr: `@request.body.owner = @request.auth.id` },
+  { op: "update", expr: `owner = @request.auth.id` },
+  { op: "delete", expr: null },
+];
+
+const providers = ["Google", "Microsoft", "GitHub", "Authentik", "Pocket ID", "Keycloak"];
+
+const more = [
+  {
+    icon: "image",
+    title: "Images & thumbnails",
+    body: "EXIF and GPS metadata stripped on upload, orientation fixed, thumbnails generated on demand as WebP.",
+  },
+  {
+    icon: "cursor",
+    title: "Collaborative editing",
+    body: "Yjs-compatible collaborative documents out of the box. Works with Tiptap, BlockNote and CodeMirror.",
+  },
+  {
+    icon: "doc",
+    title: "OpenAPI for every instance",
+    body: "An OpenAPI document generated from your live schema, typed per collection. Generate a client in any language.",
+  },
+  {
+    icon: "alert",
+    title: "Standard errors",
+    body: "Every API error is an RFC 9457 problem details object with a stable, machine-readable code.",
+  },
+  {
+    icon: "layout",
+    title: "Admin UI",
+    body: "Embedded in the binary: schema editor, records browser, auth and provider setup, dashboard, settings.",
+  },
+] as const;
+---
+<section id="features" class="section" aria-labelledby="features-title">
+  <div class="container">
+    <SectionHead index="02" label="Features" id="features-title" title="Everything an app backend needs. Nothing to wire up.">
+      A database you design at runtime, an API that enforces your rules, auth that can be the identity
+      provider for your other apps, files and realtime. One process, one data directory.
+    </SectionHead>
+
+    <div class="bento">
+      <!-- Access rules: the hero card -->
+      <article class="card panel span-4 rules" aria-labelledby="f-rules">
+        <div class="card-head">
+          <span class="ico"><Icon name="shield" /></span>
+          <p class="group">Data</p>
+        </div>
+        <h3 id="f-rules">Access rules</h3>
+        <p class="body">
+          One expression per operation, compiled to safe, parameterized SQL. Rules are checked live in
+          the admin UI as you type. New collections are <strong>locked by default</strong>.
+        </p>
+
+        <div class="rules-demo">
+          <div class="rule-table panel" role="table" aria-label="Rules for the posts collection">
+            <div class="rt-head" role="row">
+              <span role="columnheader">posts</span>
+              <span role="columnheader">rule</span>
+            </div>
+            {rules.map((r) => (
+              <div class="rt-row" role="row">
+                <span class="op" role="cell">{r.op}</span>
+                <span class="expr" role="cell">
+                  {r.expr === null ? <em class="locked"><Icon name="lock" size={12} /> locked; superusers only</em> : <code>{r.expr}</code>}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div class="sql panel">
+            <div class="sql-head"><span>list rule → SQL</span><span class="tag">illustrative</span></div>
+            <Code
+              lang="sql"
+              themes={themes}
+              defaultColor={false}
+              code={`SELECT … FROM "posts"
+WHERE "published" = ?1 OR "owner" = ?2
+-- ?1 = 1, ?2 = <id from the auth token>`}
+            />
+          </div>
+        </div>
+      </article>
+
+      <!-- Collections & REST -->
+      <article class="card panel span-2" aria-labelledby="f-collections">
+        <div class="card-head">
+          <span class="ico"><Icon name="table" /></span>
+          <p class="group">Data</p>
+        </div>
+        <h3 id="f-collections">Collections &amp; REST API</h3>
+        <p class="body">
+          Define tables at runtime in the admin UI and get a full REST API: filtering, sorting,
+          pagination, relation expansion and batch transactions. Real SQLite columns, not JSON blobs.
+        </p>
+        <div class="query panel">
+          <span class="m">GET</span>
+          <code>/api/collections/posts/records<wbr />?filter=published=true<wbr />&amp;sort=-created<wbr />&amp;expand=author</code>
+        </div>
+      </article>
+
+      <!-- OIDC provider: differentiator -->
+      <article class="card panel span-3 oidc" aria-labelledby="f-oidc">
+        <div class="card-head">
+          <span class="ico"><Icon name="id" /></span>
+          <p class="group">Auth</p>
+          <span class="badge">Built in</span>
+        </div>
+        <h3 id="f-oidc">Your own OpenID Connect provider</h3>
+        <p class="body">
+          rackend is an OIDC provider itself. Your apps log in through it with any standard OIDC
+          library, on a hosted, themeable login page. No separate identity server to run.
+        </p>
+        <ol class="flow" aria-label="Sign-in flow">
+          <li><span>your app</span></li>
+          <li><span>rackend login page</span></li>
+          <li><span>id_token + access_token</span></li>
+        </ol>
+        <dl class="kv panel">
+          <div><dt>issuer</dt><dd>https://your-rackend.example</dd></div>
+          <div><dt>flow</dt><dd>authorization code + PKCE</dd></div>
+          <div><dt>scopes</dt><dd>openid profile email offline_access</dd></div>
+        </dl>
+      </article>
+
+      <!-- Authentication -->
+      <article class="card panel span-3" aria-labelledby="f-auth">
+        <div class="card-head">
+          <span class="ico"><Icon name="key" /></span>
+          <p class="group">Auth</p>
+        </div>
+        <h3 id="f-auth">Authentication</h3>
+        <p class="body">
+          Email and password, passkeys, one-time codes and magic links. Plus login with any OIDC
+          provider: paste the issuer URL and rackend discovers the rest.
+        </p>
+        <ul class="chips" aria-label="Example identity providers">
+          {providers.map((p) => <li>{p}</li>)}
+          <li class="more">any OIDC issuer</li>
+        </ul>
+      </article>
+
+      <!-- Realtime -->
+      <article class="card panel span-2" aria-labelledby="f-realtime">
+        <div class="card-head">
+          <span class="ico"><Icon name="bolt" /></span>
+          <p class="group">Realtime</p>
+        </div>
+        <h3 id="f-realtime">Realtime</h3>
+        <p class="body">
+          Subscribe to record changes over SSE or WebSocket. Every event is checked against access rules,
+          per subscriber. Ephemeral channels for presence and typing indicators.
+        </p>
+        <div class="code panel">
+          <Code
+            lang="json"
+            themes={themes}
+            defaultColor={false}
+            code={`{ "type": "record", "topic": "records:messages",
+  "action": "create", "record": { … } }`}
+          />
+        </div>
+      </article>
+
+      <!-- Files -->
+      <article class="card panel span-2" aria-labelledby="f-files">
+        <div class="card-head">
+          <span class="ico"><Icon name="folder" /></span>
+          <p class="group">Files</p>
+        </div>
+        <h3 id="f-files">File storage</h3>
+        <p class="body">
+          Local disk by default, or any S3-compatible store. Access is controlled by the same rules as
+          records.
+        </p>
+        <ul class="chips" aria-label="Storage backends">
+          <li>local disk</li><li>AWS S3</li><li>MinIO</li><li>Garage</li><li>RustFS</li>
+        </ul>
+      </article>
+
+      <!-- Observability -->
+      <article class="card panel span-2" aria-labelledby="f-obs">
+        <div class="card-head">
+          <span class="ico"><Icon name="pulse" /></span>
+          <p class="group">Operations</p>
+        </div>
+        <h3 id="f-obs">Observability</h3>
+        <p class="body">
+          An audit trail of every change: who, what, when, before and after. Request logs, app and
+          host metrics, a built-in dashboard, Prometheus and OpenTelemetry export.
+        </p>
+        <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 30 L14 28 L28 31 L42 22 L56 25 L70 18 L84 21 L98 12 L112 17 L126 14 L140 20 L154 9 L168 13 L182 7 L200 10" />
+        </svg>
+      </article>
+    </div>
+
+    <ul class="more">
+      {more.map((m) => (
+        <li>
+          <span class="ico"><Icon name={m.icon} /></span>
+          <div>
+            <h3>{m.title}</h3>
+            <p>{m.body}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .span-2 { grid-column: span 2; }
+  .span-3 { grid-column: span 3; }
+  .span-4 { grid-column: span 4; }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    min-width: 0;
+    transition: border-color 0.2s var(--ease-out);
+  }
+  .card:hover { border-color: var(--border-strong); }
+  .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .ico {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    flex: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--fg);
+  }
+  .group {
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+  }
+  .badge {
+    margin-left: auto;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-text);
+    font: 500 11px/1.3 var(--font-mono);
+  }
+  .card h3 { font-size: 1.25rem; letter-spacing: -0.02em; }
+  .body { color: var(--fg-muted); font-size: 15px; }
+  .body strong { color: var(--fg); font-weight: 500; }
+  .card > :last-child:not(.body) { margin-top: auto; }
+
+  .code { background: var(--surface); overflow: hidden; min-width: 0; }
+  .code :global(pre.astro-code) { padding: 14px 16px; font-size: 12.5px; }
+
+  /* rules demo */
+  .rules-demo {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .rule-table { background: var(--surface); overflow: hidden; font-family: var(--font-mono); font-size: 12.5px; }
+  .rt-head, .rt-row {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 10px;
+    padding: 9px 14px;
+    align-items: center;
+  }
+  .rt-head { color: var(--fg-subtle); border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .rt-row + .rt-row { border-top: 1px solid var(--border); }
+  .op { color: var(--accent-text); }
+  .expr { overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+  .expr code { padding: 0; border: 0; background: none; font-size: inherit; color: var(--fg); }
+  .locked { display: inline-flex; align-items: center; gap: 6px; font-style: normal; color: var(--fg-subtle); }
+  .sql { background: var(--surface); overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+  .sql-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    font: 11px var(--font-mono);
+    color: var(--fg-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .tag { text-transform: none; letter-spacing: 0; border: 1px solid var(--border); border-radius: 4px; padding: 0 6px; }
+  .sql :global(pre.astro-code) { padding: 14px; font-size: 12px; }
+
+  .query {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+  .query .m { color: var(--accent-text); font-weight: 500; }
+  .query code { padding: 0; border: 0; background: none; white-space: normal; overflow-wrap: anywhere; font-size: inherit; }
+
+  /* oidc */
+  .oidc {
+    background:
+      radial-gradient(120% 80% at 100% 0%, var(--accent-soft), transparent 60%),
+      var(--bg-elev);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  }
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+    font: 12px var(--font-mono);
+  }
+  .flow li { display: inline-flex; align-items: center; gap: 8px; }
+  .flow li + li::before { content: "→"; color: var(--fg-subtle); }
+  .flow span { padding: 5px 9px; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--bg-elev); }
+  .flow li:nth-child(2) span { border-color: var(--accent); color: var(--accent-text); }
+  .kv { margin: 0; background: var(--surface); font: 12.5px var(--font-mono); }
+  .kv div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 8px 14px; }
+  .kv div + div { border-top: 1px solid var(--border); }
+  .kv dt { color: var(--fg-subtle); }
+  .kv dd { margin: 0; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .chips li {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    font: 12px/1.4 var(--font-mono);
+    color: var(--fg-muted);
+  }
+  .chips .more { border-style: dashed; background: transparent; }
+
+  .spark { width: 100%; height: 48px; }
+  .spark path { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+
+  /* compact list */
+  .more {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 28px 32px;
+    margin: 48px 0 0;
+    padding: 32px 0 0;
+    border-top: 1px dashed var(--border);
+    list-style: none;
+  }
+  .more li { display: flex; gap: 14px; }
+  .more h3 { font-size: 15px; letter-spacing: -0.01em; margin: 4px 0 4px; }
+  .more p { color: var(--fg-muted); font-size: 14px; }
+
+  @media (max-width: 1023px) {
+    .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .span-2, .span-3 { grid-column: span 1; }
+    .span-4 { grid-column: span 2; }
+    .rules-demo { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 680px) {
+    .bento { grid-template-columns: minmax(0, 1fr); }
+    .span-2, .span-3, .span-4 { grid-column: span 1; }
+    .card { padding: 20px; }
+  }
+</style>

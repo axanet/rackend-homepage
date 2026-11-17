@@ -1,0 +1,25 @@
+---
+// Placeholder rackend mark: three stacked rack units with a single status
+// light in the signal colour. Not the final logo.
+interface Props { size?: number; withWordmark?: boolean; class?: string }
+const { size = 22, withWordmark = true, class: className } = Astro.props;
+---
+<span class:list={["logo", className]}>
+  <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <rect x="4" y="4.5" width="24" height="6.5" rx="2" fill="currentColor" />
+    <rect x="4" y="12.75" width="24" height="6.5" rx="2" fill="currentColor" opacity="0.72" />
+    <rect x="4" y="21" width="24" height="6.5" rx="2" fill="currentColor" opacity="0.44" />
+    <circle cx="23.5" cy="7.75" r="1.7" fill="var(--accent)" />
+  </svg>
+  {withWordmark && <span class="wordmark">rackend</span>}
+</span>
+
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 9px; color: var(--fg); }
+  .wordmark {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.03em;
+  }
+</style>

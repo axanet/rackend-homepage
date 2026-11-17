@@ -1,0 +1,82 @@
+---
+// A one-line shell command with a copy button. The command is plain selectable
+// text; the button is progressive enhancement.
+interface Props { command: string; label?: string; class?: string }
+const { command, label = "Run", class: className } = Astro.props;
+---
+<div class:list={["cmd", className]} data-copy-root>
+  <span class="prompt" aria-hidden="true">$</span>
+  <code class="text" data-copy-text>{command}</code>
+  <button type="button" class="copy" data-copy hidden aria-label={`Copy command: ${label}`}>
+    <svg class="i-copy" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5"/></svg>
+    <svg class="i-ok" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3 3 7-7"/></svg>
+  </button>
+  <span class="visually-hidden" aria-live="polite" data-copy-status></span>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-copy-root]")) {
+    const btn = root.querySelector<HTMLButtonElement>("[data-copy]");
+    const text = root.querySelector("[data-copy-text]")?.textContent ?? "";
+    const status = root.querySelector("[data-copy-status]");
+    if (!btn || !navigator.clipboard) continue;
+    btn.hidden = false;
+    let timer = 0;
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(text);
+        root.dataset.copied = "";
+        if (status) status.textContent = "Copied to clipboard";
+        clearTimeout(timer);
+        timer = window.setTimeout(() => {
+          delete root.dataset.copied;
+          if (status) status.textContent = "";
+        }, 1600);
+      } catch {}
+    });
+  }
+</script>
+
+<style>
+  .cmd {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    height: 48px;
+    padding: 0 6px 0 16px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    background: var(--bg-elev);
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+  }
+  .prompt { color: var(--accent-text); user-select: none; flex: none; }
+  .text {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    color: var(--fg);
+  }
+  .text::-webkit-scrollbar { display: none; }
+  .copy {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--fg-muted);
+    cursor: pointer;
+  }
+  .copy[hidden] { display: none; }
+  .copy:hover { background: var(--surface); color: var(--fg); }
+  .copy svg { width: 16px; height: 16px; grid-area: 1 / 1; transition: opacity 0.15s, transform 0.15s; }
+  .i-ok { opacity: 0; transform: scale(0.6); color: var(--accent-text); }
+  [data-copied] .i-copy { opacity: 0; transform: scale(0.6); }
+  [data-copied] .i-ok { opacity: 1; transform: none; }
+</style>

@@ -1,0 +1,220 @@
+---
+// Hero visual. The SVG is generated at build time from the same slab list and
+// camera as the WebGPU scene, and is what renders without JS / without WebGPU.
+// When WebGPU is available the live vgpu scene fades in on top.
+import { renderDiagram } from "./diagram";
+import { CYCLE_SECONDS } from "./layout";
+
+const W = 900, H = 600;
+const svg = renderDiagram(
+  {
+    platform: "var(--bg-elev)",
+    platformSide: "var(--border)",
+    cabinet: "var(--surface-2)",
+    unit: "var(--surface)",
+    device: "var(--surface-2)",
+    screen: "var(--bg)",
+    line: "var(--border-strong)",
+    accent: "var(--accent)",
+    resp: "var(--fg)",
+    event: "var(--event)",
+  },
+  { width: W, height: H },
+);
+
+const logLines = [
+  { k: "req", m: "GET", p: "/api/collections/posts/records?sort=-created", s: "200" },
+  { k: "req", m: "GET", p: "/api/collections/tasks/records?expand=owner", s: "200" },
+];
+---
+<figure class="wrap" data-scene="static" data-scene-root data-cycle={CYCLE_SECONDS}>
+  <div class="scene">
+  <svg class="fallback" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="scene-title">
+    <title id="scene-title">Illustration: a laptop, a phone and a desktop each send requests to one server rack and receive responses.</title>
+    <Fragment set:html={svg} />
+  </svg>
+
+  <canvas class="live" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="below">
+
+  <div class="hud" aria-hidden="true">
+    <div class="hud-head"><span class="dot"></span>rackend · access log <span class="tag">illustrative</span></div>
+    <ol class="log" data-log>
+      {logLines.map((l) => (
+        <li class={l.k}><i></i><b>{l.m}</b><span>{l.p}</span><em>{l.s}</em></li>
+      ))}
+    </ol>
+  </div>
+
+  <figcaption class="legend">
+    <span class="req"><i></i>request</span>
+    <span class="res"><i></i>response</span>
+    <span class="evt"><i></i>realtime event</span>
+  </figcaption>
+  </div>
+</figure>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-scene-root]");
+  const canvas = root?.querySelector<HTMLCanvasElement>("canvas.live");
+
+  if (root && canvas && "gpu" in navigator && navigator.gpu) {
+    import("./scene")
+      .then(({ mountScene }) => mountScene(root, canvas))
+      .catch((err) => {
+        root.dataset.scene = "static";
+        console.info("[rackend] WebGPU scene unavailable, showing static diagram.", err);
+      });
+  }
+
+  // The access log follows the scene: one line per request, added when the
+  // request reaches the rack. Without the live scene it ticks at the same pace.
+  type Line = [kind: string, method: string, path: string, status: string];
+  const BY_CLIENT: Line[] = [
+    ["req", "GET", "/api/collections/posts/records?sort=-created", "200"],
+    ["req", "GET", "/api/collections/tasks/records?expand=owner", "200"],
+    ["req", "GET", "/api/files/posts/…/cover.jpg?thumb=320x0", "200"],
+  ];
+  const WRITE: Line = ["req", "POST", "/api/collections/messages/records", "201"];
+  const EVENT: Line = ["evt", "SSE", "records:messages  create", ""];
+
+  const log = root?.querySelector<HTMLOListElement>("[data-log]");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const append = ([k, m, p, s]: Line) => {
+    if (!log) return;
+    const li = document.createElement("li");
+    li.className = `${k} enter`;
+    li.innerHTML = `<i></i><b></b><span></span><em></em>`;
+    li.querySelector("b")!.textContent = m;
+    li.querySelector("span")!.textContent = p;
+    li.querySelector("em")!.textContent = s;
+    log.append(li);
+    requestAnimationFrame(() => requestAnimationFrame(() => li.classList.remove("enter")));
+    while (log.children.length > 3) log.firstElementChild?.remove();
+  };
+  // same schedule as layout.ts: the sender rotates, every 4th request is a write
+  const onBeat = (cycle: number) => {
+    if (cycle % 4 === 3) {
+      append(WRITE);
+      setTimeout(() => append(EVENT), 1700);
+    } else {
+      append(BY_CLIENT[cycle % 3]!);
+    }
+  };
+
+  if (root && log && !reduce) {
+    root.addEventListener("rackend:beat", (e) => onBeat((e as CustomEvent<{ cycle: number }>).detail.cycle));
+    const period = Number(root.dataset.cycle) * 1000;
+    let n = 0;
+    setInterval(() => {
+      if (root.dataset.scene !== "live" && !document.hidden) onBeat(n++);
+    }, period);
+  }
+</script>
+
+<style>
+  .wrap { margin: 0; display: grid; gap: 12px; }
+  .scene {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    width: 100%;
+    isolation: isolate;
+  }
+  .below {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .fallback,
+  .live {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .live { opacity: 0; transition: opacity 0.6s var(--ease-out); }
+  /* the two renderings line up, so hide the SVG only once the canvas has faded in */
+  .fallback { transition: opacity 0.2s linear 0.6s; }
+  .wrap[data-scene="live"] .live { opacity: 1; }
+  .wrap[data-scene="live"] .fallback { opacity: 0; }
+
+  /* --- access log HUD --- */
+  .hud {
+    flex: 1;
+    min-width: 0;
+    max-width: 440px;
+    padding: 10px 12px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--bg-elev) 82%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.5;
+    box-shadow: var(--shadow-lg);
+  }
+  .hud-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    color: var(--fg-subtle);
+    letter-spacing: 0.02em;
+  }
+  .hud-head .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .tag {
+    margin-left: auto;
+    padding: 0 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 10px;
+  }
+  .log { margin: 0; padding: 0; list-style: none; display: grid; gap: 1px; }
+  .log :global(li) {
+    display: grid;
+    grid-template-columns: 6px 46px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+    color: var(--fg-muted);
+    white-space: nowrap;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+  .log :global(li.enter) { opacity: 0; transform: translateY(6px); }
+  .log :global(i) { width: 6px; height: 6px; border-radius: 2px; background: currentColor; }
+  .log :global(b) { font-weight: 500; color: var(--fg); }
+  .log :global(span) { overflow: hidden; text-overflow: ellipsis; }
+  .log :global(em) { font-style: normal; color: var(--fg-subtle); }
+  .log :global(li.req) { --dot: var(--accent); }
+  .log :global(li.evt) { --dot: var(--event); }
+  .log :global(li i) { background: var(--dot); }
+
+  .legend {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg-subtle);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .legend span { color: var(--fg-subtle); }
+  .legend .req i { background: var(--accent); }
+  .legend .res i { background: var(--fg); }
+  .legend .evt i { background: var(--event); }
+
+  @media (max-width: 640px) {
+    .hud { display: none; }
+    .legend { justify-content: flex-start; }
+  }
+</style>

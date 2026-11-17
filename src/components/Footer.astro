@@ -1,0 +1,120 @@
+---
+import Logo from "./Logo.astro";
+import CopyCommand from "./CopyCommand.astro";
+import GitHubIcon from "./icons/GitHub.astro";
+import Arrow from "./icons/Arrow.astro";
+import { SITE, LINKS } from "../config/site";
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: "Project",
+    links: [
+      { label: "Docs", href: LINKS.docs, soon: true },
+      { label: "Changelog", href: LINKS.changelog, soon: true },
+      { label: "Releases", href: LINKS.releases },
+      { label: "Blog", href: LINKS.blog, soon: true },
+    ],
+  },
+  {
+    title: "Source",
+    links: [
+      { label: "GitHub", href: LINKS.github },
+      { label: "License", href: LINKS.license },
+      { label: "Security policy", href: LINKS.security },
+    ],
+  },
+];
+---
+<section class="cta" aria-labelledby="cta-title">
+  <div class="container inner">
+    <h2 id="cta-title">Own your backend.</h2>
+    <p>One command away. Free and open source.</p>
+    <CopyCommand command={SITE.runCommand} label="docker run" class="cta-cmd" />
+    <div class="ctas">
+      <a class="btn btn-primary" href="#quickstart">Get started <Arrow /></a>
+      <a class="btn btn-ghost" href={LINKS.github}><GitHubIcon /> Star on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container grid">
+    <div class="brand">
+      <Logo />
+      <p>Your whole backend in one binary.</p>
+      <p class="credit">Inspired by <a href={LINKS.pocketbase}>PocketBase</a>.</p>
+    </div>
+    {columns.map((col) => (
+      <nav aria-label={col.title}>
+        <h2>{col.title}</h2>
+        <ul>
+          {col.links.map((l) => (
+            <li>
+              {"soon" in l && l.soon ? <span class="soon">{l.label}</span> : <a href={l.href}>{l.label}</a>}
+            </li>
+          ))}
+        </ul>
+      </nav>
+    ))}
+  </div>
+  <div class="container bottom">
+    <p>© {year} {SITE.owner}</p>
+    <p class="mono">{SITE.image}</p>
+  </div>
+</footer>
+
+<style>
+  .cta {
+    position: relative;
+    padding-block: clamp(80px, 12vw, 140px);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    overflow: clip;
+    background:
+      radial-gradient(50% 70% at 50% 100%, var(--accent-soft), transparent 70%);
+  }
+  .inner { display: grid; justify-items: center; gap: 18px; }
+  .cta h2 { font-size: clamp(2.2rem, 5vw, 3.6rem); letter-spacing: -0.04em; }
+  .cta p { color: var(--fg-muted); font-size: 1.1rem; }
+  .inner :global(.cta-cmd) { width: 100%; max-width: 600px; margin-top: 8px; text-align: left; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+
+  .footer { border-top: 1px solid var(--border); padding-top: 56px; font-size: 14px; }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+  .brand { display: grid; gap: 10px; align-content: start; }
+  .brand p { color: var(--fg-muted); }
+  .credit a { color: var(--fg-muted); }
+  .footer h2 {
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-subtle);
+    margin-bottom: 14px;
+  }
+  .footer ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .footer a { color: var(--fg-muted); text-decoration: none; }
+  .footer a:hover { color: var(--fg); }
+  .soon { color: var(--fg-subtle); }
+  .bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 48px;
+    padding-block: 20px 28px;
+    border-top: 1px solid var(--border);
+    color: var(--fg-subtle);
+  }
+  .mono { font-family: var(--font-mono); font-size: 12px; }
+
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .brand { grid-column: 1 / -1; }
+  }
+</style>

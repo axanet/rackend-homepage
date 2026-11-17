@@ -1,0 +1,83 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { LINKS } from "../config/site";
+---
+<section id="compare" class="section" aria-labelledby="compare-title">
+  <div class="container">
+    <SectionHead index="05" label="How rackend differs" id="compare-title" title="Standing on PocketBase's shoulders.">
+      rackend is inspired by <a href={LINKS.pocketbase}>PocketBase</a>, and shares its single-binary
+      spirit. Here is where it takes a different path, and what it deliberately doesn't do.
+    </SectionHead>
+
+    <div class="cols">
+      <article class="col panel">
+        <p class="vs">vs. PocketBase</p>
+        <h3>Same idea, more built in.</h3>
+        <ul>
+          <li>A built-in OIDC provider, so other apps can log in through rackend</li>
+          <li>Collaborative editing with Yjs-compatible documents</li>
+          <li>An audit trail and app + host metrics out of the box</li>
+          <li>Written in Rust</li>
+        </ul>
+      </article>
+
+      <article class="col panel">
+        <p class="vs">vs. Supabase / Appwrite</p>
+        <h3>No stack to operate.</h3>
+        <ul>
+          <li>One process instead of a multi-service deployment</li>
+          <li>SQLite instead of Postgres</li>
+          <li>Aimed at single-app, single-server deployments</li>
+        </ul>
+      </article>
+
+      <article class="col panel tradeoffs">
+        <p class="vs">Honest trade-offs</p>
+        <h3>What it won't do.</h3>
+        <ul>
+          <li>Single instance; no horizontal scaling</li>
+          <li>No custom server-side code (hooks) in v1</li>
+          <li>One app per instance; no multi-tenancy</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section-head :global(a) { color: var(--fg); }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .col { padding: 24px; display: grid; gap: 12px; align-content: start; }
+  .vs {
+    font: 500 11px/1 var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-text);
+  }
+  .tradeoffs .vs { color: var(--fg-subtle); }
+  h3 { font-size: 1.2rem; letter-spacing: -0.02em; }
+  ul { display: grid; gap: 10px; margin: 6px 0 0; padding: 0; list-style: none; }
+  li {
+    position: relative;
+    padding-left: 20px;
+    color: var(--fg-muted);
+    font-size: 15px;
+  }
+  li::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: var(--font-mono);
+    color: var(--accent-text);
+  }
+  .tradeoffs li::before { content: "–"; color: var(--fg-subtle); }
+
+  @media (max-width: 900px) {
+    .cols { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

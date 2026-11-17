@@ -1,0 +1,47 @@
+---
+// Minimal 16px stroke icon set, drawn for this site.
+const PATHS = {
+  table: "M2.5 3.5h11v9h-11zM2.5 6.5h11M6.5 6.5v6",
+  shield: "M8 1.8l5 1.9v3.8c0 3-2.1 5.6-5 6.7-2.9-1.1-5-3.7-5-6.7V3.7zM5.8 8l1.6 1.6 3-3.1",
+  key: "M10.5 2a3.5 3.5 0 11-2.9 5.4L2.5 12.5V14h2v-1.5H6V11h1.5l1.1-1.1A3.5 3.5 0 0110.5 2zM11 5h.01",
+  id: "M2.5 3h11v10h-11zM5.5 7a1.2 1.2 0 102.4 0 1.2 1.2 0 00-2.4 0M4.5 10.5c.4-1 1.2-1.5 2.2-1.5s1.8.5 2.2 1.5M10 6.5h1.8M10 9h1.8",
+  folder: "M2 4.5a1 1 0 011-1h3l1.5 1.5H13a1 1 0 011 1V12a1 1 0 01-1 1H3a1 1 0 01-1-1z",
+  image: "M2.5 3h11v10h-11zM2.5 10.5l3-3 3 3 2-2 2.5 2.5M10.2 6.2h.01",
+  bolt: "M9 1.5L3.5 9H8l-1 5.5L12.5 7H8z",
+  cursor: "M3 2.5l3.8 10 1.4-4.3 4.3-1.4zM9 9l3.5 3.5",
+  pulse: "M1.5 8h3l1.5-4 3 8 1.5-4h4",
+  doc: "M4 1.5h5l3 3V14.5H4zM9 1.5v3h3M6 8h4M6 10.5h4",
+  alert: "M8 2L1.8 13h12.4zM8 6.5v3M8 11.3h.01",
+  layout: "M2.5 2.5h11v11h-11zM2.5 6h11M6.5 6v7.5",
+  binary: "M3 2.5h4v4H3zM9 9.5h4v4H9zM10.5 2.5v4M4.5 9.5v4M9 2.5h1.5M3 13.5h1.5",
+  db: "M2.5 4c0-1.1 2.5-2 5.5-2s5.5.9 5.5 2-2.5 2-5.5 2-5.5-.9-5.5-2zM2.5 4v8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2V4M2.5 8c0 1.1 2.5 2 5.5 2s5.5-.9 5.5-2",
+  archive: "M2 3h12v3H2zM3 6v7h10V6M6.5 8.5h3",
+  check: "M3 8.5l3 3 7-7",
+  lock: "M4 7V5a4 4 0 018 0v2M3 7h10v7H3zM8 10v1.5",
+  copy: "M5 5h9v9H5zM11 5V2H2v9h3",
+  history: "M2.5 8a5.5 5.5 0 101.7-4M2 2v3h3M8 5v3l2 1.5",
+  trash: "M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4",
+} as const;
+
+interface Props {
+  name: keyof typeof PATHS;
+  size?: number;
+  class?: string;
+}
+const { name, size = 16, class: className } = Astro.props;
+---
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 16 16"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.4"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+>
+  <path d={PATHS[name]} />
+</svg>

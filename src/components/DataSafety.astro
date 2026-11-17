@@ -1,0 +1,143 @@
+---
+import SectionHead from "./SectionHead.astro";
+import Icon from "./icons/Icon.astro";
+
+const facts = [
+  {
+    icon: "history",
+    title: "Upgrades never lose data",
+    body: "A verified backup before every schema migration, integrity checks after. If anything looks wrong, like an accidental downgrade, rackend refuses to start rather than risk your data.",
+  },
+  {
+    icon: "check",
+    title: "Every upgrade path tested",
+    body: "In CI, the database of every released version is upgraded to the latest one and checked.",
+  },
+  {
+    icon: "trash",
+    title: "A trash, not a drop",
+    body: "Deleted fields and collections are kept in a trash for 30 days before they are purged.",
+  },
+  {
+    icon: "copy",
+    title: "Backups are a file copy",
+    body: "One SQLite file plus a storage folder. Scheduled backups are built in.",
+  },
+  {
+    icon: "lock",
+    title: "One writer, always",
+    body: "An exclusive lock stops a second instance from writing to the same data directory.",
+  },
+] as const;
+---
+<section id="data" class="section data" aria-labelledby="data-title">
+  <div class="container">
+    <div class="layout">
+      <div>
+        <SectionHead index="03" label="Data safety" id="data-title" title="Built to keep your data.">
+          Data safety wins over everything else in rackend's design. Upgrading should be the most boring
+          thing you do all week.
+        </SectionHead>
+
+        <ul class="facts">
+          {facts.map((f) => (
+            <li>
+              <span class="ico"><Icon name={f.icon} /></span>
+              <div>
+                <h3>{f.title}</h3>
+                <p>{f.body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="logs">
+        <figure class="term panel ticks">
+          <figcaption class="term-bar">
+            <span class="title">upgrade · v1.3 → v1.4</span><span class="tag">illustrative</span>
+          </figcaption>
+          <pre><code><span class="dim">$</span> docker compose pull &amp;&amp; docker compose up -d
+<span class="ok">✓</span> data directory locked        <span class="dim">rackend.lock</span>
+<span class="ok">✓</span> migration checksums verified
+<span class="ok">✓</span> backup written                <span class="dim">backups/pre-upgrade-12-to-14-….db</span>
+<span class="ok">✓</span> backup integrity_check       <span class="dim">ok</span>
+<span class="ok">✓</span> applied migration 13
+<span class="ok">✓</span> applied migration 14
+<span class="ok">✓</span> integrity_check, foreign_key_check <span class="dim">ok</span>
+<span class="acc">→</span> serving on 0.0.0.0:8080</code></pre>
+        </figure>
+
+        <figure class="term panel refuse">
+          <figcaption class="term-bar">
+            <span class="title">accidental downgrade</span><span class="tag">exit 78</span>
+          </figcaption>
+          <pre><code><span class="err">✗</span> database schema v14 is newer than this binary supports (v12).
+  Downgrading is not supported; restore a pre-upgrade backup
+  from /data/backups to go back.</code></pre>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .data {
+    background:
+      radial-gradient(50% 60% at 85% 30%, color-mix(in srgb, var(--write) 7%, transparent), transparent 70%),
+      var(--bg);
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+  .facts { display: grid; gap: 24px; margin: 0; padding: 0; list-style: none; }
+  .facts li { display: flex; gap: 16px; }
+  .ico {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--write) 35%, var(--border));
+    color: var(--write);
+    background: color-mix(in srgb, var(--write) 8%, transparent);
+  }
+  .facts h3 { font-size: 1.05rem; letter-spacing: -0.015em; margin: 4px 0 4px; }
+  .facts p { color: var(--fg-muted); font-size: 15px; }
+
+  .logs { display: grid; gap: 16px; position: sticky; top: 96px; }
+  .term { margin: 0; overflow: hidden; }
+  .term-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    font: 11px var(--font-mono);
+    color: var(--fg-subtle);
+  }
+  .tag { border: 1px solid var(--border); border-radius: 4px; padding: 0 6px; }
+  pre {
+    margin: 0;
+    padding: 18px 16px;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.8;
+    scrollbar-width: thin;
+  }
+  .ok { color: var(--accent-text); }
+  .acc { color: var(--accent-text); }
+  .dim { color: var(--fg-subtle); }
+  .err { color: var(--danger); }
+  .refuse { border-color: color-mix(in srgb, var(--danger) 35%, var(--border)); }
+  .refuse .tag { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
+
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .logs { position: static; }
+  }
+</style>

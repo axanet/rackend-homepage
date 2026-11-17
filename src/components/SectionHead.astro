@@ -1,0 +1,14 @@
+---
+interface Props {
+  index: string;
+  label: string;
+  title: string;
+  id: string;
+}
+const { index, label, title, id } = Astro.props;
+---
+<header class="section-head">
+  <p class="eyebrow"><span class="idx">{index}</span><span aria-hidden="true">/</span>{label}</p>
+  <h2 id={id}>{title}</h2>
+  {Astro.slots.has("default") && <p><slot /></p>}
+</header>

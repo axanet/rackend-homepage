@@ -1,0 +1,25 @@
+[tools]
+bun = "1.4.3"
+
+[tasks.install]
+description = "Install dependencies"
+run = "bun install --frozen-lockfile"
+
+[tasks.dev]
+description = "Run the dev server"
+depends = ["install"]
+run = "bun run dev"
+
+[tasks.build]
+description = "Type-check and build the static site into dist/"
+depends = ["install"]
+run = "bun run build"
+
+[tasks.preview]
+description = "Serve the built site locally"
+depends = ["build"]
+run = "bun run preview"
+
+[tasks.og]
+description = "Regenerate public/og.png from the hero scene layout (macOS, uses sips)"
+run = "bun scripts/og.ts"

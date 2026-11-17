@@ -1,0 +1,99 @@
+---
+import Logo from "./Logo.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import GitHubIcon from "./icons/GitHub.astro";
+import { NAV, LINKS } from "../config/site";
+---
+<header class="header">
+  <div class="container bar">
+    <a href="/" class="home" aria-label="rackend home"><Logo /></a>
+
+    <nav aria-label="Primary" class="nav">
+      <ul>
+        {NAV.map((item) => (
+          <li>
+            {item.soon ? (
+              <span class="soon" title="Coming soon">{item.label}</span>
+            ) : (
+              <a href={item.href}>{item.label}</a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <ThemeToggle />
+      <a class="gh" href={LINKS.github} aria-label="rackend on GitHub">
+        <GitHubIcon />
+        <span>GitHub</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 60px;
+  }
+  .home { text-decoration: none; display: inline-flex; }
+  .nav { flex: 1; }
+  .nav ul {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nav a,
+  .nav .soon {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--fg-muted);
+    text-decoration: none;
+    transition: color 0.15s, background-color 0.15s;
+  }
+  .nav a:hover { color: var(--fg); background: var(--surface); }
+  .nav .soon { color: var(--fg-subtle); cursor: default; }
+  .actions { display: flex; align-items: center; gap: 8px; }
+  .gh {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s;
+  }
+  .gh:hover { background: var(--surface); }
+  .gh :global(svg) { width: 16px; height: 16px; }
+
+  @media (max-width: 860px) {
+    .nav { display: none; }
+    .actions { margin-left: auto; }
+  }
+  @media (max-width: 420px) {
+    .gh span { display: none; }
+    .gh { width: 34px; padding: 0; justify-content: center; }
+  }
+</style>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .u { fill: #0b0c0e; } .l { fill: #0a8f5f; }
+    @media (prefers-color-scheme: dark) { .u { fill: #ededef; } .l { fill: #3ddc97; } }
+  </style>
+  <rect class="u" x="4" y="4.5" width="24" height="6.5" rx="2"/>
+  <rect class="u" x="4" y="12.75" width="24" height="6.5" rx="2" opacity="0.72"/>
+  <rect class="u" x="4" y="21" width="24" height="6.5" rx="2" opacity="0.44"/>
+  <circle class="l" cx="23.5" cy="7.75" r="1.7"/>
+</svg>

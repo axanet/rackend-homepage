@@ -1,0 +1,145 @@
+---
+import { Code } from "astro:components";
+import CopyCommand from "./CopyCommand.astro";
+import SectionHead from "./SectionHead.astro";
+import { SITE } from "../config/site";
+
+const themes = { light: "github-light", dark: "github-dark-dimmed" } as const;
+---
+<section id="quickstart" class="section" aria-labelledby="quickstart-title">
+  <div class="container">
+    <SectionHead index="01" label="Quickstart" id="quickstart-title" title="Running in a minute.">
+      One command, no config file. Everything else is set up at runtime in the admin UI.
+    </SectionHead>
+
+    <ol class="steps">
+      <li class="step panel">
+        <div class="num" aria-hidden="true">1</div>
+        <h3>Run it</h3>
+        <p>Start the container, or download the binary and run <code>./rackend serve</code>.</p>
+        <CopyCommand command={SITE.runCommand} label="docker run" />
+      </li>
+
+      <li class="step panel">
+        <div class="num" aria-hidden="true">2</div>
+        <h3>Create the admin account</h3>
+        <p>Open the one-time setup link from the logs and create the first superuser.</p>
+        <div class="term" role="group" aria-label="Example log output">
+          <div class="term-bar" aria-hidden="true"><span></span><span></span><span></span><em>logs</em></div>
+          <pre><code><span class="dim">INFO</span> rackend listening on 0.0.0.0:8080
+<span class="dim">INFO</span> Open http://0.0.0.0:8080/_/setup?token=<span class="hl">…</span> to create the first superuser.</code></pre>
+        </div>
+      </li>
+
+      <li class="step panel">
+        <div class="num" aria-hidden="true">3</div>
+        <h3>Create a collection, call the API</h3>
+        <p>Add a <code>posts</code> collection in the admin UI, set its list rule, and you have a REST API.</p>
+        <div class="code panel">
+          <Code lang="sh" themes={themes} defaultColor={false} code={`curl http://localhost:8080/api/collections/posts/records`} />
+        </div>
+      </li>
+    </ol>
+
+    <div class="codegen panel ticks">
+      <div class="codegen-copy">
+        <p class="eyebrow"><span class="idx">+</span> Typed clients</p>
+        <h3>Generate a client for any language.</h3>
+        <p>
+          Every instance describes its live schema as OpenAPI, typed per collection. Feed it to the
+          generator you already use.
+        </p>
+      </div>
+      <div class="code panel">
+        <Code
+          lang="sh"
+          themes={themes}
+          defaultColor={false}
+          code={`rackend openapi export > openapi.json
+# then use any OpenAPI generator, e.g. openapi-generator, oapi-codegen, progenitor`}
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: step;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    min-width: 0;
+  }
+  .step > :last-child { margin-top: auto; }
+  .num {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font: 500 13px/1 var(--font-mono);
+    color: var(--accent-text);
+    background: var(--accent-soft);
+  }
+  h3 { font-size: 1.125rem; letter-spacing: -0.015em; }
+  .step p { color: var(--fg-muted); font-size: 15px; }
+
+  .code { background: var(--surface); border-radius: var(--radius); min-width: 0; overflow: hidden; }
+
+  .term {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    overflow: hidden;
+    min-width: 0;
+  }
+  .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .term-bar span { width: 8px; height: 8px; border-radius: 50%; background: var(--border-strong); }
+  .term-bar em { margin-left: auto; font: normal 11px var(--font-mono); color: var(--fg-subtle); }
+  .term pre {
+    margin: 0;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--fg);
+    scrollbar-width: thin;
+  }
+  .term .dim { color: var(--accent-text); }
+  .term .hl { color: var(--write); }
+
+  .codegen {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: center;
+    gap: 32px;
+    margin-top: 16px;
+    padding: clamp(24px, 4vw, 40px);
+  }
+  .codegen-copy { display: grid; gap: 10px; }
+  .codegen h3 { font-size: 1.375rem; }
+  .codegen-copy > p:last-child { color: var(--fg-muted); }
+
+  @media (max-width: 960px) {
+    .steps { grid-template-columns: minmax(0, 1fr); }
+    .codegen { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  }
+</style>

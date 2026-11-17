@@ -1,0 +1,26 @@
+{
+  "name": "rackend-homepage",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --bun astro dev",
+    "build": "bun --bun astro check && bun --bun astro build",
+    "preview": "bun --bun astro preview",
+    "check": "bun --bun astro check",
+    "shaders:check": "bun --bun vgpu check src/visual/solid.wgsl src/visual/flow.wgsl src/visual/ground.wgsl"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.5",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "astro": "^7.4.12",
+    "vgpu": "^0.6.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/bun": "^1.4.4",
+    "@vgpu/wgsl": "^0.6.0",
+    "@webgpu/types": "^0.1.74",
+    "typescript": "^6"
+  }
+}

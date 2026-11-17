@@ -1,0 +1,76 @@
+---
+import "../styles/global.css";
+import { SITE } from "../config/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = SITE.title, description = SITE.description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
+const ogImage = new URL("/og.png", Astro.site ?? SITE.url).href;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script is:inline>
+      // Resolve the theme before first paint. A stored choice wins; otherwise
+      // follow the OS and keep following it.
+      (() => {
+        const root = document.documentElement;
+        const mq = matchMedia("(prefers-color-scheme: dark)");
+        let stored = null;
+        try { stored = localStorage.getItem("theme"); } catch {}
+        const apply = () => {
+          root.dataset.theme = stored === "light" || stored === "dark" ? stored : mq.matches ? "dark" : "light";
+        };
+        apply();
+        mq.addEventListener("change", () => { if (!stored) apply(); });
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 12px;
+    top: -60px;
+    z-index: 100;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--fg);
+    color: var(--bg);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .skip-link:focus { top: 12px; }
+</style>

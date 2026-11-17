@@ -1,7 +1,7 @@
-# rackend homepage — content brief
+# rackend homepage: content brief
 
 > For the web design agent. This document defines **what** the homepage must say and contain.
-> **How** it looks — layout, section order (beyond what's marked as required), visual style, colors, typography, imagery, animation, component choices — is **your call**.
+> **How** it looks is **your call**: layout, section order (beyond what's marked as required), visual style, colors, typography, imagery, animation, component choices.
 > Source of truth for technical facts: `SPEC.md`. If this brief and the spec disagree, the spec wins.
 >
 > **Owner:** axanet GmbH (project/organization name: axanet) · Repository: https://github.com/axanet/rackend · Docker image: `ghcr.io/axanet/rackend`
@@ -15,7 +15,7 @@ rackend is an open-source, self-hosted **backend-as-a-service**: one binary (or 
 It is for developers building CRUD-style web and mobile apps, internal tools and prototypes who want to own their backend without running a fleet of services.
 
 **One-sentence pitch (draft, may be refined):**
-> Your whole backend in one binary — database, auth, files and realtime, self-hosted in a minute.
+> Your whole backend in one binary: database, auth, files and realtime, self-hosted in a minute.
 
 **Name:** always lowercase `rackend`, also at the start of a sentence.
 
@@ -61,13 +61,13 @@ The blocks below are the content that must exist on the page. Grouping, order (e
 
 ### 5.1 Hero (must be first)
 - Name + one-line pitch (§1).
-- One supporting sentence, e.g. "Collections, REST API, auth, file storage and realtime — in a single Rust binary backed by SQLite. Self-hosted, open source, zero config."
+- One supporting sentence, e.g. "Collections, REST API, auth, file storage and realtime in a single Rust binary backed by SQLite. Self-hosted, open source, zero config."
 - Primary CTA (Get started) + secondary CTA (GitHub).
 - The run command, copyable:
   ```sh
   docker run -p 8080:8080 -v rackend_data:/data ghcr.io/axanet/rackend
   ```
-- A visible project status label (e.g. "Pre-alpha — in development"); see §7.
+- A visible project status label (e.g. "Pre-alpha: in development"); see §7.
 
 ### 5.2 Quickstart
 Three steps, each very short:
@@ -91,15 +91,15 @@ Each feature needs a short title and 1–3 sentences. Use the facts listed; word
 |---|---|
 | **Collections & REST API** | Define tables at runtime in the admin UI; get a full REST API with filtering, sorting, pagination, relation expansion and batch transactions. Real SQLite columns, not JSON blobs. |
 | **Access rules** | One expression per operation (list/view/create/update/delete), e.g. `owner = @request.auth.id`. Compiled to safe, parameterized SQL. Rules are checked live in the admin UI as you type. Locked by default. *(Good candidate for a code/visual example.)* |
-| **Authentication** | Email + password, passkeys, one-time codes and magic links, plus login with any OIDC provider (Google, Microsoft, GitHub, Authentik, Pocket ID, Keycloak, …) — just paste the issuer URL. |
-| **Built-in OIDC provider** | rackend is an OpenID Connect provider itself: your apps log in through it with any standard OIDC library. Hosted, themeable login page. *(Strong differentiator — give it visibility.)* |
+| **Authentication** | Email + password, passkeys, one-time codes and magic links, plus login with any OIDC provider (Google, Microsoft, GitHub, Authentik, Pocket ID, Keycloak, …). Just paste the issuer URL. |
+| **Built-in OIDC provider** | rackend is an OpenID Connect provider itself: your apps log in through it with any standard OIDC library. Hosted, themeable login page. *(Strong differentiator; give it visibility.)* |
 | **File storage** | Local disk by default, or any S3-compatible store (AWS S3, MinIO, Garage, RustFS). Access controlled by the same rules as records. |
 | **Images & thumbnails** | EXIF/GPS metadata stripped on upload, orientation fixed, thumbnails generated on demand as WebP. |
-| **Realtime** | Subscribe to record changes over SSE or WebSocket — every event is checked against access rules per subscriber. Ephemeral channels for presence and typing indicators. |
-| **Collaborative editing** | Yjs-compatible collaborative documents out of the box — works with Tiptap, BlockNote, CodeMirror. |
+| **Realtime** | Subscribe to record changes over SSE or WebSocket. Every event is checked against access rules per subscriber. Ephemeral channels for presence and typing indicators. |
+| **Collaborative editing** | Yjs-compatible collaborative documents out of the box. Works with Tiptap, BlockNote, CodeMirror. |
 | **Observability** | Audit trail of every change (who, what, when, before/after), request logs, app + host/container metrics, a built-in dashboard, Prometheus and OpenTelemetry export. |
-| **OpenAPI for every instance** | rackend generates an OpenAPI document from your live schema — typed per collection — so you can generate a client for any language with the tools you already use. |
-| **Standard errors** | Every API error is an RFC 9457 problem details object with a stable machine-readable code — predictable to handle in any client. |
+| **OpenAPI for every instance** | rackend generates an OpenAPI document from your live schema, typed per collection, so you can generate a client for any language with the tools you already use. |
+| **Standard errors** | Every API error is an RFC 9457 problem details object with a stable machine-readable code, so it is predictable to handle in any client. |
 | **Admin UI** | Embedded in the binary: schema editor, records browser, auth & provider setup, dashboard, settings. |
 
 Group these however you like (e.g. "Data", "Auth", "Files", "Realtime", "Operations"). You may also choose to highlight 3–4 and list the rest compactly.
@@ -118,7 +118,7 @@ This is a core value of the project and should not be buried. Facts:
 - Runs on a €5 VPS, a Raspberry Pi-class device, a homelab box. *(Don't state concrete performance numbers until measured; see §7.)*
 
 ### 5.6 Architecture teaser (optional but nice)
-A small, simple illustration or list: HTTP API → core → SQLite / file storage, with auth, realtime, audit around it. Hexagonal core, so gRPC/MCP adapters are possible later. Keep it light — this is not docs.
+A small, simple illustration or list: HTTP API → core → SQLite / file storage, with auth, realtime, audit around it. Hexagonal core, so gRPC/MCP adapters are possible later. Keep it light; this is not docs.
 
 ### 5.7 Comparison (optional)
 If included, it must be **fair and factual**, credit PocketBase as the inspiration, and avoid claims about competitors that might be outdated. Prefer a "how rackend differs" framing over a checkmark table:
@@ -159,7 +159,7 @@ Links: Docs, GitHub (https://github.com/axanet/rackend), Changelog/Releases, Lic
 - Tooling constraints: built with **bun** (never npm/yarn/pnpm), tasks via **mise**, consistent with the main repo. Framework choice (Astro vs. SvelteKit static) is open; see the note at the end.
 
 ### Meta (drafts)
-- Title: `rackend — your backend in one binary`
+- Title: `rackend: your backend in one binary`
 - Description: `Open-source, self-hosted backend in a single Rust binary: database, REST API with access rules, auth with OIDC, file storage and realtime. Backed by SQLite.`
 - Keywords to naturally cover: self-hosted backend, backend as a service, PocketBase alternative, Rust, SQLite, OIDC provider, realtime, open source.
 
@@ -168,7 +168,7 @@ Links: Docs, GitHub (https://github.com/axanet/rackend), Changelog/Releases, Lic
 ## 9. Assets
 
 Available / to be created:
-- Logo / wordmark: **does not exist yet** — you may propose one (simple, works at favicon size, works in light and dark mode).
+- Logo / wordmark: **does not exist yet**. You may propose one (simple, works at favicon size, works in light and dark mode).
 - Favicon + OG image: to be created.
 - Admin UI screenshots: **not available yet**. Use placeholders that are obviously placeholders, or avoid screenshots for now (e.g. code, diagrams, abstract visuals).
 - No stock photos of people.
@@ -178,7 +178,7 @@ Available / to be created:
 ## 10. Out of scope for the design agent
 
 - Writing the docs content.
-- Pricing (there is none; rackend is free and open source — license TBD).
+- Pricing (there is none; rackend is free and open source; license TBD).
 - Newsletter/signup flows.
 
 ---
