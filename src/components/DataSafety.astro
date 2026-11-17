@@ -84,7 +84,7 @@ const facts = [
 <style>
   .data {
     background:
-      radial-gradient(50% 60% at 85% 30%, color-mix(in srgb, var(--write) 7%, transparent), transparent 70%),
+      radial-gradient(ellipse 640px 520px at 85% 30%, color-mix(in srgb, var(--write) 7%, transparent), transparent 70%),
       var(--bg);
   }
   .layout {
@@ -138,6 +138,12 @@ const facts = [
 
   @media (max-width: 960px) {
     .layout { grid-template-columns: minmax(0, 1fr); }
+    /* stacked: keep the glow behind the heading instead of a sliver down the side */
+    .data {
+      background:
+        radial-gradient(ellipse 460px 380px at 80% 140px, color-mix(in srgb, var(--write) 8%, transparent), transparent 70%),
+        var(--bg);
+    }
     .logs { position: static; }
   }
 </style>

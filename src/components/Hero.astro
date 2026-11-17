@@ -51,7 +51,7 @@ import { SITE, LINKS } from "../config/site";
     inset: 0;
     z-index: -1;
     background:
-      radial-gradient(60% 50% at 72% 38%, var(--accent-soft), transparent 70%),
+      radial-gradient(ellipse 760px 520px at 72% 38%, var(--accent-soft), transparent 70%),
       linear-gradient(var(--border) 1px, transparent 1px) 0 0 / 56px 56px,
       linear-gradient(90deg, var(--border) 1px, transparent 1px) 0 0 / 56px 56px;
     mask-image: radial-gradient(90% 75% at 50% 30%, #000 30%, transparent 85%);
@@ -106,6 +106,13 @@ import { SITE, LINKS } from "../config/site";
 
   @media (max-width: 1023px) {
     .grid { grid-template-columns: minmax(0, 1fr); }
+    /* stacked: the glow sits behind the scene, below the copy */
+    .backdrop {
+      background:
+        radial-gradient(ellipse 520px 420px at 50% 78%, var(--accent-soft), transparent 70%),
+        linear-gradient(var(--border) 1px, transparent 1px) 0 0 / 56px 56px,
+        linear-gradient(90deg, var(--border) 1px, transparent 1px) 0 0 / 56px 56px;
+    }
     .visual { max-width: 720px; width: 100%; justify-self: center; }
   }
   @media (max-width: 480px) {
