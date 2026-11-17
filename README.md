@@ -28,6 +28,21 @@ src/visual/               hero scene: vgpu driver (scene.ts), WGSL shaders, SVG 
 scripts/og.ts             Open Graph image generator
 ```
 
+## Fonts and licenses
+
+All fonts are self-hosted and licensed under the SIL Open Font License 1.1.
+
+| Font | Use | Source | License |
+|---|---|---|---|
+| Redaction 20 (MCKL) | display headings (`h1`, `h2`) | `src/assets/fonts/redaction/`, unmodified web fonts from MCKL's release | `src/assets/fonts/redaction/OFL.txt` |
+| Geist, Geist Mono (Vercel) | UI text, code, labels | `@fontsource-variable/geist*` | in the package |
+
+The OFL requires the copyright notice and license to travel with every copy of
+the fonts. The site therefore serves verbatim copies in `public/licenses/`, and
+the footer credits the fonts with links to them. When adding or updating a
+font, add its license there too. Do not modify the font files, and do not edit
+the license texts (they are exempt from the no-em-dash rule).
+
 ## Open items
 
 - Final domain (`SITE.url` in `src/config/site.ts`, `public/robots.txt`).

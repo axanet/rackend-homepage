@@ -3,6 +3,7 @@
 import { $ } from "bun";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import opentype from "opentype.js";
 import { renderDiagram } from "../src/visual/diagram";
 
 const W = 1200, H = 630;
@@ -27,6 +28,8 @@ const scene = renderDiagram(
 );
 
 const sans = `'Helvetica Neue', Helvetica, Arial, sans-serif`;
+// sips can't load web fonts, so the headline is drawn as outlines from the original OTF
+const display = opentype.loadSync(new URL("../src/assets/fonts/redaction/Redaction20-Regular.otf", import.meta.url).pathname);
 const mono = `Menlo, 'SF Mono', monospace`;
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
@@ -45,7 +48,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" 
     <text x="44" y="24" font-family="${mono}" font-size="26" font-weight="600" fill="${C.fg}" letter-spacing="-0.5">rackend</text>
   </g>
   ${["Your whole", "backend in", "one binary."]
-    .map((l, i) => `<text x="72" y="${290 + i * 74}" font-family="${sans}" font-size="68" font-weight="600" fill="${C.fg}" letter-spacing="-2.4">${l}</text>`)
+    .map((l, i) => `<path d="${display.getPath(l, 72, 290 + i * 74, 72, { kerning: true }).toPathData(2)}" fill="${C.fg}"/>`)
     .join("")}
   <text x="72" y="500" font-family="${sans}" font-size="23" fill="${C.muted}">Database, auth, files and realtime.</text>
   <text x="72" y="532" font-family="${sans}" font-size="23" fill="${C.muted}">Self-hosted. Open source. SQLite.</text>
