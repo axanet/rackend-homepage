@@ -1,0 +1,77 @@
+/* The docs (Starlight) in the homepage's brand: tokens.css mapped onto
+   Starlight's variables. Unlayered, so it wins over Starlight's layered CSS
+   in both themes; the tokens switch with [data-theme] through light-dark(). */
+@import "./tokens.css";
+
+:root {
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+
+  --sl-color-white: var(--fg);
+  --sl-color-gray-1: var(--fg);
+  --sl-color-gray-2: light-dark(#34373d, #c9cbd1);
+  --sl-color-gray-3: var(--fg-muted);
+  --sl-color-gray-4: light-dark(#a3a6ad, #4a4e57);
+  --sl-color-gray-5: var(--border);
+  --sl-color-gray-6: var(--surface);
+  --sl-color-gray-7: light-dark(#f6f6f4, #0d0e11);
+  --sl-color-black: var(--bg);
+
+  --sl-color-accent-low: light-dark(#d7f0e4, #0d2a1f);
+  --sl-color-accent: var(--accent);
+  --sl-color-accent-high: light-dark(#06714b, #a8f0cf);
+  --sl-color-text-accent: var(--accent-text);
+
+  --sl-color-bg-nav: color-mix(in srgb, var(--bg) 88%, transparent);
+  --sl-color-bg-sidebar: var(--bg);
+  --sl-color-hairline: var(--border);
+  --sl-color-hairline-light: var(--border);
+  --sl-color-hairline-shade: var(--border);
+
+  --sl-text-h1: 2.5rem;
+  --sl-content-width: 46rem;
+}
+
+/* Page titles in Redaction 20, as on the homepage. */
+h1#_top {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.sl-markdown-content :is(h2, h3, h4) {
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+:root {
+  --sl-text-h2: 1.75rem;
+  --sl-text-h3: 1.3rem;
+  --sl-text-h4: 1.1rem;
+}
+
+.sl-markdown-content code:not(:where(.not-content *)) {
+  border-radius: var(--radius-sm);
+}
+
+header.header {
+  backdrop-filter: saturate(1.4) blur(10px);
+}
+
+/* Sidebar: muted links, the current page in the signal colour. */
+nav.sidebar a[aria-current="page"] {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+/* Banner on unreleased and archived versions. */
+.sl-banner {
+  background: color-mix(in srgb, var(--write) 14%, var(--bg));
+  color: var(--fg);
+  border-bottom: 1px solid color-mix(in srgb, var(--write) 40%, var(--bg));
+}
+.sl-banner a {
+  color: inherit;
+  text-decoration: underline;
+}

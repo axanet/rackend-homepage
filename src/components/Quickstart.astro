@@ -60,6 +60,11 @@ const themes = { light: "github-light", dark: "github-dark-dimmed" } as const;
         />
       </div>
     </div>
+
+    <p class="more">
+      <a href="/docs/getting-started/">Follow the getting started guide</a> for every step with
+      commands to copy, or <a href="/docs/">read the docs</a>.
+    </p>
   </div>
 </section>
 
@@ -137,6 +142,8 @@ const themes = { light: "github-light", dark: "github-dark-dimmed" } as const;
   .codegen-copy { display: grid; gap: 10px; }
   .codegen h3 { font-size: 1.375rem; }
   .codegen-copy > p:last-child { color: var(--fg-muted); }
+  .more { margin: 24px 0 0; color: var(--fg-muted); }
+  .more a { color: var(--accent-text); }
 
   @media (max-width: 960px) {
     .steps { grid-template-columns: minmax(0, 1fr); }

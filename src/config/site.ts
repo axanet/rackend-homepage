@@ -1,13 +1,17 @@
 // Single source of truth for site-wide facts. Change values here, not in components.
 
-// Latest rackend release; update it after each release. The hero links its
-// release notes and the run command pins its x.y image tag, as the docs do.
-const RELEASE = "0.0.1";
+import { LATEST } from "../docs/versions";
+
+// The latest rackend release comes from the docs versions (src/docs/versions.ts,
+// updated by `mise run docs:release`). The hero links its release notes and the
+// run command pins its x.y image tag, as the docs do.
+const RELEASE = LATEST.release!;
 const IMAGE = "ghcr.io/axanet/rackend";
 
 export const SITE = {
   name: "rackend",
-  // TODO: final production domain. Used for canonical URLs, sitemap and Open Graph.
+  // Canonical URLs, sitemap, Open Graph, and the error links rackend sends
+  // (https://rackend.axanet.ch/docs/reference/errors/#<code>): keep it stable.
   url: "https://rackend.axanet.ch",
   title: "rackend: your backend in one binary",
   description:
@@ -23,7 +27,7 @@ export const SITE = {
 } as const;
 
 export const LINKS = {
-  docs: `${SITE.repo}/blob/main/docs/guide/README.md`,
+  docs: "/docs/",
   changelog: `${SITE.repo}/blob/main/CHANGELOG.md`,
   blog: "/blog",
   github: SITE.repo,

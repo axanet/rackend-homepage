@@ -1,0 +1,18 @@
+---
+// Replaces Starlight's theme provider so the docs share the homepage's theme
+// choice (localStorage "theme": light, dark, or unset for the OS setting).
+---
+<script is:inline>
+  window.StarlightThemeProvider = (() => {
+    let stored = null;
+    try { stored = localStorage.getItem("theme"); } catch {}
+    const mq = matchMedia("(prefers-color-scheme: dark)");
+    const apply = () => {
+      document.documentElement.dataset.theme =
+        stored === "light" || stored === "dark" ? stored : mq.matches ? "dark" : "light";
+    };
+    apply();
+    mq.addEventListener("change", () => { if (!stored) apply(); });
+    return { updatePickers() {} };
+  })();
+</script>

@@ -1,0 +1,73 @@
+---
+title: Install and run
+description: Run rackend with Docker or Docker Compose, its data directory, the first start and shutdown.
+sidebar:
+  order: 1
+---
+
+import Screenshot from "@docs/Screenshot.astro";
+
+## Quick start
+
+```sh
+docker run -d --name rackend -v rackend_data:/data -p 8080:8080 ghcr.io/axanet/rackend:0.0
+```
+
+No environment variables are required. Everything except the few [bootstrap variables](/docs/run/configuration/) is configured at runtime in the admin UI at `/_/`.
+
+The image is published for `linux/amd64` and `linux/arm64`. Pin the minor version (`x.y`, here `0.0`) so upgrades are deliberate: the tag always points at the newest patch release of that minor version.
+
+## Docker Compose
+
+```yaml title="docker-compose.yml"
+services:
+  rackend:
+    image: ghcr.io/axanet/rackend:0.0
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    volumes: ["rackend_data:/data"]
+    stop_grace_period: 30s
+volumes:
+  rackend_data:
+```
+
+## Data directory
+
+rackend keeps everything in one data directory (`/data` in the container):
+
+| Path | Contents |
+|---|---|
+| `rackend.lock` | Exclusive lock, held while the instance runs |
+| `data.db` | Main SQLite database (+ `-wal`, `-shm`) |
+| `logs.db` | Request logs and metrics; losing it is harmless |
+| `storage/` | Uploaded files (local filesystem backend) |
+| `backups/` | Pre-upgrade, manual and scheduled backups |
+| `tmp/` | Upload staging, wiped at startup |
+
+:::danger[Use a local disk]
+**Do not put the data directory on NFS, SMB/CIFS or another network filesystem.** SQLite's locking is unreliable there and the database can be corrupted. rackend logs a warning at startup when it detects one. Use a local disk or a block volume.
+:::
+
+:::caution[One instance per data directory]
+**Do not run two instances on the same data directory.** The second one refuses to start (exit code 75).
+:::
+
+The container runs as UID/GID `10001:10001`. Bind mounts must be writable by that user.
+
+Uploaded files go to `storage/` unless you choose an [S3-compatible bucket](/docs/run/file-storage/).
+
+## First start
+
+Without `RACKEND_SUPERUSER_EMAIL`/`_PASSWORD`, rackend logs a one-time link on every start until the first superuser exists:
+
+```
+Open http://localhost:8080/_/setup?token=… to create the first superuser.
+```
+
+The setup screen also asks for the public URL users reach the instance at.
+
+<Screenshot name="setup" alt="The first-start setup screen of the admin UI, asking for the superuser account and the public URL." />
+
+## Shutdown
+
+On `SIGTERM`/`SIGINT` rackend stops accepting connections, waits up to 10 s for in-flight requests, finishes queued database writes, checkpoints the databases and exits 0. Give the container at least 30 s (`stop_grace_period`). Other exit codes are listed in [Exit codes](/docs/reference/exit-codes/).

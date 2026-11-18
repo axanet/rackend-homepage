@@ -24,6 +24,16 @@ run = "bun run preview"
 description = "Regenerate public/og.png from the hero scene layout (macOS, uses sips)"
 run = "bun scripts/og.ts"
 
+[tasks."docs:screenshots"]
+description = "Take the admin UI screenshots for the docs (Docker, Google Chrome, about 6 min): mise run docs:screenshots <image> <out-dir>, e.g. ghcr.io/axanet/rackend:0.0.1 src/assets/screenshots/0.0"
+depends = ["install"]
+run = "bun scripts/docs-screenshots.ts"
+
+[tasks."docs:release"]
+description = "Update the docs after a rackend release: mise run docs:release <x.y.z> (patch: names the release; new minor: archives the latest docs, next becomes latest)"
+depends = ["install"]
+run = "bun scripts/docs-release.ts"
+
 [tasks."docker:build"]
 description = "Build the container image"
 run = "docker build -t rackend-homepage:dev ."
