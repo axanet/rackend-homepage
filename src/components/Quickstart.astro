@@ -16,7 +16,7 @@ const themes = { light: "github-light", dark: "github-dark-dimmed" } as const;
       <li class="step panel">
         <div class="num" aria-hidden="true">1</div>
         <h3>Run it</h3>
-        <p>Start the container, or download the binary and run <code>./rackend serve</code>.</p>
+        <p>Start the container. The image runs on amd64 and arm64 and needs no other services.</p>
         <CopyCommand command={SITE.runCommand} label="docker run" />
       </li>
 
@@ -26,8 +26,8 @@ const themes = { light: "github-light", dark: "github-dark-dimmed" } as const;
         <p>Open the one-time setup link from the logs and create the first superuser.</p>
         <div class="term" role="group" aria-label="Example log output">
           <div class="term-bar" aria-hidden="true"><span></span><span></span><span></span><em>logs</em></div>
-          <pre><code><span class="dim">INFO</span> rackend listening on 0.0.0.0:8080
-<span class="dim">INFO</span> Open http://0.0.0.0:8080/_/setup?token=<span class="hl">…</span> to create the first superuser.</code></pre>
+          <pre><code><span class="dim">INFO</span> rackend is ready addr=0.0.0.0:8080
+<span class="dim">WARN</span> Open http://localhost:8080/_/setup?token=<span class="hl">…</span> to create the first superuser.</code></pre>
         </div>
       </li>
 

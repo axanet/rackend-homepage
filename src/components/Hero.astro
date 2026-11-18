@@ -9,7 +9,11 @@ import { SITE, LINKS } from "../config/site";
   <div class="backdrop" aria-hidden="true"></div>
   <div class="container grid">
     <div class="copy">
-      {SITE.status && <p class="status"><span class="pip"></span>{SITE.status}</p>}
+      {SITE.status && (
+        <a class="status" href={LINKS.release} title={`Release notes for ${SITE.release}`}>
+          <span class="pip"></span>{SITE.release} · {SITE.status}
+        </a>
+      )}
       <p class="eyebrow">Open-source backend-as-a-service</p>
       <h1 id="hero-title">
         Your whole backend<br class="br" /> in one binary.
@@ -74,7 +78,10 @@ import { SITE, LINKS } from "../config/site";
     border-radius: 999px;
     font: 500 12px/1.4 var(--font-mono);
     color: var(--fg-muted);
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
   }
+  .status:hover { color: var(--fg); border-color: var(--fg-subtle); }
   .pip { width: 6px; height: 6px; border-radius: 50%; background: var(--write); }
   h1 {
     font-size: clamp(2.6rem, 5.6vw, 4.6rem);
