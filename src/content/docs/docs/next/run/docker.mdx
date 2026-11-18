@@ -70,4 +70,4 @@ The setup screen also asks for the public URL users reach the instance at.
 
 ## Shutdown
 
-On `SIGTERM`/`SIGINT` rackend stops accepting connections, waits up to 10 s for in-flight requests, finishes queued database writes, checkpoints the databases and exits 0. Give the container at least 30 s (`stop_grace_period`). Other exit codes are listed in [Exit codes](/docs/reference/exit-codes/).
+On `SIGTERM`/`SIGINT` rackend answers new requests with `503` ([`unavailable`](/docs/reference/errors/#unavailable), with `Retry-After`), `/api/health` included, so load balancers stop sending traffic. It then closes realtime and collaboration connections (their clients reconnect to the next instance), stops accepting connections, waits up to 10 s for in-flight requests, finishes queued database writes, checkpoints the databases and exits 0. Give the container at least 30 s (`stop_grace_period`). Other exit codes are listed in [Exit codes](/docs/reference/exit-codes/).
