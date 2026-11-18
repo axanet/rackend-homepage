@@ -24,8 +24,9 @@ jobs:
       - run: mise run build
       - run: bun run shaders:check
       - name: no em dashes in prose (Writing Style); license texts are exempt
+        # -I skips binary files: compressed images can contain the same bytes.
         run: |
-          if git grep -n $'\xe2\x80\x94' -- . ':!LICENSE' ':!public/licenses' ':!src/assets/fonts'; then
+          if git grep -nI $'\xe2\x80\x94' -- . ':!LICENSE' ':!public/licenses' ':!src/assets/fonts'; then
             echo "::error::found an em dash (U+2014); rewrite the sentence instead"
             exit 1
           fi
