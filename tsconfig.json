@@ -11,6 +11,11 @@
     "types": [
       "@webgpu/types",
       "bun"
-    ]
+    ],
+    "paths": {
+      "@docs/*": [
+        "./src/components/docs/*"
+      ]
+    }
   }
 }

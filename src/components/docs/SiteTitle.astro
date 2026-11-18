@@ -1,0 +1,92 @@
+---
+// Docs header title: the rackend mark (to the homepage), "Docs" (to the root of
+// this version) and the version picker.
+import { getCollection } from "astro:content";
+import Logo from "../Logo.astro";
+import { VERSIONS, pathInVersion, versionBase, versionLabel, versionOf, versionPrefix } from "../../docs/versions";
+
+const route = Astro.locals.starlightRoute;
+const current = versionOf(route.id);
+const here = pathInVersion(route.id);
+const ids = new Set((await getCollection("docs")).map((e) => e.id));
+// The same page in every version, or that version's start page if it has none.
+const options = VERSIONS.map((v) => {
+  const id = here ? `${versionPrefix(v)}/${here}` : versionPrefix(v);
+  return { v, href: ids.has(id) ? `/${id}/` : versionBase(v), label: versionLabel(v) };
+});
+---
+<div class="site-title">
+  <a class="home" href="/" aria-label="rackend home"><Logo /></a>
+  <a class="docs" href={route.siteTitleHref}>Docs</a>
+  <label class="version" title="Documentation version">
+    <span class="sr-only">Documentation version</span>
+    <select data-docs-version>
+      {options.map((o) => <option value={o.href} selected={o.v === current}>{o.label}</option>)}
+    </select>
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 6.5 8 10l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  </label>
+</div>
+
+<script>
+  for (const select of document.querySelectorAll<HTMLSelectElement>("[data-docs-version]")) {
+    select.addEventListener("change", () => (location.href = select.value));
+  }
+</script>
+
+<style>
+  .site-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .home {
+    display: inline-flex;
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .docs {
+    color: var(--fg-muted);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    padding-left: 12px;
+    border-left: 1px solid var(--border-strong);
+  }
+  .docs:hover {
+    color: var(--fg);
+  }
+  .version {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  .version select {
+    appearance: none;
+    font: 500 12px/1.4 var(--font-mono);
+    color: var(--fg-muted);
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    padding: 4px 26px 4px 10px;
+    cursor: pointer;
+  }
+  .version select:hover,
+  .version select:focus-visible {
+    color: var(--fg);
+    border-color: var(--fg-subtle);
+  }
+  .version svg {
+    position: absolute;
+    right: 8px;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    color: var(--fg-subtle);
+  }
+  @media (max-width: 30rem) {
+    .docs {
+      display: none;
+    }
+  }
+</style>

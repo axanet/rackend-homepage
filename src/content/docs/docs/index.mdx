@@ -1,0 +1,39 @@
+---
+title: rackend documentation
+description: How to run, configure and build on rackend, the self-hosted backend in one binary.
+sidebar:
+  label: Introduction
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import Screenshot from "@docs/Screenshot.astro";
+
+rackend is a self-hosted, single-binary backend-as-a-service written in Rust, inspired by [PocketBase](https://pocketbase.io). One binary (or one container) gives you a database with an admin UI, a REST API with access rules, authentication (including an OpenID Connect provider), file storage, realtime and observability. SQLite is the only database.
+
+<Screenshot name="dashboard" alt="The rackend admin UI dashboard with request, error and latency charts." />
+
+## What you get
+
+- **Collections and REST API.** Define collections in the admin UI and get a REST API with [access rules](/docs/guides/rules/) that decide who may see and change what.
+- **Authentication.** Passwords, passkeys, one-time codes by email, verification, password reset and email change, and [sign-in through Google, Microsoft Entra ID, Apple, GitHub](/docs/run/sign-in-providers/) or any OpenID Connect issuer.
+- **OpenID Connect provider.** [Sign users in to your own apps](/docs/guides/sign-in-for-apps/) with rackend, tested nightly against the OpenID Foundation conformance suite (Basic OP and Config OP).
+- **Files.** Uploads on local disk or any [S3-compatible bucket](/docs/run/file-storage/), with thumbnails made on demand.
+- **Realtime.** [Record events](/docs/reference/realtime-protocol/) over SSE and WebSocket, channels with presence, and collaborative editing with Yjs.
+- **Data safety.** [Scheduled and on-demand backups](/docs/run/backups/) with a checksum for every file, [a verified snapshot before every upgrade](/docs/run/upgrades/), and [secrets encrypted at rest](/docs/run/configuration/#secrets-at-rest).
+- **Observability.** [A dashboard in the admin UI](/docs/run/monitoring/), request logs, an audit log, Prometheus metrics and OpenTelemetry export.
+- **Typed clients.** An [OpenAPI document](/docs/guides/clients/) for generating clients in your language.
+
+## Where to start
+
+<CardGrid>
+  <LinkCard title="Getting started" description="Run rackend, create a collection with access rules, and call the API. About five minutes." href="/docs/getting-started/" />
+  <LinkCard title="Run rackend" description="Docker, storage, configuration, reverse proxies, email, backups and upgrades." href="/docs/run/docker/" />
+  <LinkCard title="Rules" description="Who may see and change what, including how rules treat lists of values." href="/docs/guides/rules/" />
+  <LinkCard title="Errors" description="Every problem code the API returns." href="/docs/reference/errors/" />
+</CardGrid>
+
+## Versions
+
+These docs exist for every minor version of rackend; pick yours next to the title at the top. Container tags follow the same scheme: `ghcr.io/axanet/rackend:0.0` always runs the newest `0.0.x`. The `next` docs describe rackend's main branch, which is not released yet.
+
+rackend is in early development. While the version is `0.x`, a minor release may contain breaking changes; the [changelog](https://github.com/axanet/rackend/blob/main/CHANGELOG.md) marks them.

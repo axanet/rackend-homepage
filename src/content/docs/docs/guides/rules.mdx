@@ -1,0 +1,148 @@
+---
+title: Rules
+description: Who may see and change what. The rule language, empty values, lists of values, recipes and filters.
+sidebar:
+  order: 1
+---
+
+import Screenshot from "@docs/Screenshot.astro";
+
+Every collection has five rules that decide who may do what: `list`, `view`, `create`, `update` and `delete`. The same language filters records (`?filter=`) and realtime subscriptions.
+
+| Rule value | Meaning |
+|---|---|
+| none (`null`) | Locked: superusers only. New collections start like this. |
+| `""` (empty) | Public: anyone, signed in or not. |
+| an expression | Allowed when the expression is true for the record and the request. |
+
+Superusers bypass every rule.
+
+## How each rule is used
+
+| Operation | When the rule says no |
+|---|---|
+| list | The record is left out of the results. |
+| view | 404, as if the record did not exist. |
+| create | 403. The rule sees the new record and the submitted body. |
+| update | The record must pass the view rule (else 404), then the update rule, checked against the stored record with the body available (else 403). |
+| delete | View rule (else 404), then the delete rule (else 403). |
+| realtime | The view rule is checked for every event and every subscriber. |
+
+If you may create or update a record but not view the result, the API answers `204 No Content`.
+
+## The language
+
+```
+status = 'published' && (author = @request.auth.id || @request.auth.role = 'editor')
+```
+
+- **Operators:** `=` `!=` `>` `>=` `<` `<=`, `~` (contains, case-insensitive) and `!~`. Combine with `&&`, `||`, `!` and parentheses.
+- **Values:** `'text'` or `"text"`, numbers, `true`, `false`, `null`.
+- **Fields** of the record by name. `author.name` follows a relation (3 steps at most). `comments_via_post` reaches the records of `comments` whose `post` points here (a back-relation).
+- **Request:** `@request.auth.<field>` (the signed-in user; every field is empty when nobody is signed in), `@request.auth.collection_name`, `@request.body.<field>` (the submitted value on create and update), `@request.query.<name>`, `@request.headers.<name>` (lowercase, `-` written as `_`), `@request.method`, `@request.context`.
+- **Time:** `@now`, `@today_start`, `@today_end`.
+- **Other collections:** `@collection.<name>.<field>` joins any record of another collection, for example memberships. These lookups ignore the other collection's rules. Not available in `?filter=`.
+- **Modifiers:** `field:length` (number of values), `field:lower`, `field:each` (each value of a list on its own), `@request.body.field:isset` (the field was sent).
+- **Functions:** `lower(x)`, `upper(x)`, `len(x)`, `coalesce(a, b)`, `date_add(date, 'P1D')`.
+- **Comments:** `// …` until the end of the line, in stored rules.
+
+Rules are type checked when you save them: comparing a date with a boolean, or naming a field that does not exist, is an error with its position. The admin UI shows it as you type; `POST /api/rules/check` does the same for scripts.
+
+<Screenshot name="collection-rules" alt="The rules of a collection in the admin UI, with a type error shown under a rule as it is typed." />
+
+## Empty values
+
+`null` and `''` both mean "empty": `x = null` matches a value that is null or an empty string, and so does `x = ''`.
+
+**Any other comparison with an empty value is false.** So `author = @request.auth.id` is false for every record when nobody is signed in, and false for records without an author. To require a signed-in user, write:
+
+```
+@request.auth.id != ''
+```
+
+## Lists of values
+
+Some operands hold several values: multi-value select, relation and file fields, back-relations, `:each`, and paths through them. For those:
+
+- **plain operators mean all**: every value must satisfy the comparison;
+- **`?` operators mean at least one**: `?=`, `?!=`, `?>`, `?>=`, `?<`, `?<=`, `?~`, `?!~`.
+
+With an empty list, a plain operator is **true** (nothing fails) and a `?` operator is **false** (nothing matches).
+
+:::caution
+Mixing these up is the most common rule mistake, so check every rule that touches a list.
+:::
+
+| Rule | `tags = ['a','b']` | `tags = ['a']` | `tags = []` |
+|---|---|---|---|
+| `tags ?= 'a'` (has an `a`) | true | true | false |
+| `tags = 'a'` (every tag is `a`) | false | true | **true** |
+| `tags ?!= 'a'` (has something other than `a`) | true | false | false |
+| `tags != 'a'` (no tag is `a`) | false | false | **true** |
+| `tags:length > 0 && tags = 'a'` (only `a`, not empty) | false | true | false |
+
+Typical patterns:
+
+```
+// the user is one of the record's members (multi relation)
+members ?= @request.auth.id
+
+// none of the record's labels is "secret"
+labels != 'secret'
+
+// the post has at least one approved comment (back-relation)
+comments_via_post.approved ?= true
+
+// the user belongs to the record's team (membership collection)
+@collection.memberships.team = team && @collection.memberships.user = @request.auth.id
+```
+
+## Recipes
+
+Owner only:
+
+```
+@request.auth.id != '' && owner = @request.auth.id
+```
+
+Create only as yourself (the create rule sees the new record):
+
+```
+@request.auth.id != '' && owner = @request.auth.id
+```
+
+Never change the owner on update:
+
+```
+owner = @request.auth.id && (@request.body.owner:isset = false || @request.body.owner = @request.auth.id)
+```
+
+Published, or your own drafts:
+
+```
+status = 'published' || (@request.auth.id != '' && author = @request.auth.id)
+```
+
+Users of a specific auth collection:
+
+```
+@request.auth.collection_name = 'staff'
+```
+
+Verified accounts only:
+
+```
+@request.auth.email_verified = true
+```
+
+## Filters
+
+`GET /api/collections/{c}/records?filter=…` uses the same language. The filter is combined with the list rule, so it can only narrow what you may see. `@collection` is not allowed in filters, so clients cannot probe other collections.
+
+```
+?filter=created >= @today_start && title ~ 'report'
+?filter=tags ?= 'urgent'
+?sort=-created,title
+```
+
+Filters on hidden fields (an auth collection's email when emails are not visible) are refused for everyone but superusers.

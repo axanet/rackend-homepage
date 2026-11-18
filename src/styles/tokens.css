@@ -1,0 +1,78 @@
+/* Fonts and design tokens, shared by the homepage (global.css) and the docs
+   (docs.css). Colours use light-dark(), driven by color-scheme; [data-theme]
+   pins it. */
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+/* Redaction 20 (MCKL, SIL OFL 1.1, see src/assets/fonts/redaction/OFL.txt): display face for headings. */
+@font-face {
+  font-family: "Redaction 20";
+  src: url("../assets/fonts/redaction/Redaction_20-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Redaction 20";
+  src: url("../assets/fonts/redaction/Redaction_20-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Redaction 20";
+  src: url("../assets/fonts/redaction/Redaction_20-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------------------------------------------------------------------------
+   Tokens
+   Colours use light-dark(), driven by color-scheme. Without JS the OS
+   preference applies; the theme toggle pins it via [data-theme].
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light dark;
+
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Redaction 20", ui-serif, Georgia, serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --bg: light-dark(#fafaf9, #0a0b0d);
+  --bg-elev: light-dark(#ffffff, #101114);
+  --surface: light-dark(#f3f3f1, #14161a);
+  --surface-2: light-dark(#ebebe8, #1a1d22);
+  --border: light-dark(#e3e3df, #22252b);
+  --border-strong: light-dark(#cfcfca, #30343c);
+
+  --fg: light-dark(#0b0c0e, #ededef);
+  --fg-muted: light-dark(#52555c, #a0a3ab);
+  --fg-subtle: light-dark(#6e7178, #6f727b);
+
+  /* signal colours: requests / writes / realtime events */
+  --accent: light-dark(#0a8f5f, #3ddc97);
+  --accent-text: light-dark(#06714b, #3ddc97);
+  --accent-soft: light-dark(#0a8f5f14, #3ddc9714);
+  --accent-contrast: light-dark(#ffffff, #04140d);
+  --write: light-dark(#b25f00, #f5a524);
+  --event: light-dark(#6d4fd6, #a78bfa);
+  --danger: light-dark(#c4314b, #ff6b81);
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+
+  --container: 1200px;
+  --gutter: clamp(16px, 4vw, 32px);
+  --section-y: clamp(72px, 11vw, 140px);
+
+  --shadow-lg: 0 1px 0 light-dark(#ffffff, #ffffff0a) inset,
+    0 24px 60px -24px light-dark(#0b0c0e33, #000000aa);
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }

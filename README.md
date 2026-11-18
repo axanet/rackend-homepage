@@ -18,6 +18,34 @@ mise run preview
 mise run og        # regenerate public/og.png (macOS)
 ```
 
+## Docs
+
+The rackend documentation is served at `/docs/`, built with
+[Starlight](https://starlight.astro.build) in the site's brand. It is
+versioned by rackend minor version:
+
+| Path | Content | Source |
+|---|---|---|
+| `/docs/...` | the latest release (stable URLs; rackend's error responses link here) | `src/content/docs/docs/` |
+| `/docs/next/...` | rackend's `main`, not released yet | `src/content/docs/docs/next/` |
+| `/docs/<x.y>/...` | older minor versions, archived | `src/content/docs/docs/<x.y>/` |
+
+`src/docs/versions.ts` lists the versions and the latest release (the homepage
+shows it too). Pages link to each other with latest paths (`/docs/guides/rules/`);
+in other versions those links are rewritten to stay in that version. Only the
+latest release is in the search index.
+
+- **Changing rackend's behaviour:** update `next/` here first. rackend's CI runs
+  its getting started guide verbatim and checks its error codes against
+  `next/reference/errors.md`.
+- **After a rackend release:** `mise run docs:release <x.y.z>`. A patch release
+  only changes the version the docs name; a new minor version archives the
+  latest docs under `/docs/<x.y>/` and makes `next/` the latest.
+- **Screenshots** of the admin UI come from the release's container image:
+  `mise run docs:screenshots <image> <dir>` (Docker and Google Chrome), in light
+  and dark. Pages use `<Screenshot name="…" alt="…" />`; `next` uses the latest
+  release's screenshots until it has its own.
+
 ## Container
 
 The image serves the built site with unprivileged nginx on port 8080. It has
@@ -37,10 +65,17 @@ request, and publishes `ghcr.io/axanet/rackend-homepage:latest` (plus a
 ```
 src/config/site.ts        site-wide facts: URLs, pitch, run command, nav, optional status badge
 src/layouts/Base.astro    <head>, SEO/OG tags, no-flash theme script
-src/styles/global.css     design tokens (light-dark()), base styles, utilities
+src/styles/tokens.css     fonts and design tokens (light-dark()), shared by the site and the docs
+src/styles/global.css     base styles and utilities of the site
+src/styles/docs.css       the tokens mapped onto Starlight
+src/content/docs/docs/    the docs, one folder per version (see Docs)
+src/docs/                 docs versions, version middleware, versioned links
+src/components/docs/      Starlight overrides (title, theme) and the Screenshot component
 src/components/           page sections (Hero, Quickstart, Features, DataSafety, OneBinary, Comparison, Footer)
 src/visual/               hero scene: vgpu driver (scene.ts), WGSL shaders, SVG fallback (HostScene.astro)
-scripts/og.ts             Open Graph image generator
+scripts/og.ts             Open Graph image (and GitHub social preview) generator
+scripts/docs-release.ts   docs update after a rackend release
+scripts/docs-screenshots.ts  admin UI screenshots for the docs
 docker/                   nginx config for the container image
 ```
 
@@ -61,7 +96,7 @@ the license texts.
 
 ## Open items
 
-- Docs and changelog routes (nav shows them as inactive until they exist).
+- A changelog page (the nav links rackend's CHANGELOG.md on GitHub for now).
 
 ## Contributing
 

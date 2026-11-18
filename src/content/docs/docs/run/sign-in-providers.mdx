@@ -1,0 +1,24 @@
+---
+title: Sign-in providers
+description: Let users sign in with Google, Microsoft Entra ID, Apple, GitHub or any OpenID Connect issuer.
+sidebar:
+  order: 6
+---
+
+import Screenshot from "@docs/Screenshot.astro";
+
+Settings → Sign-in providers adds OpenID Connect providers (presets for Google, Microsoft Entra ID, Apple, GitLab, Authentik, Pocket ID, Keycloak, Zitadel, or any issuer) and GitHub.
+
+1. Set the public URL first.
+2. Register the redirect URI the dialog shows at the provider: `{public_url}/api/collections/{collection}/providers/{name}/callback`.
+
+   <Screenshot name="settings-providers-dialog" alt="The dialog for adding a sign-in provider, showing the redirect URI to register at the provider." />
+
+3. Add your app's return URL to **App redirect URIs** (exact match). Apps start a sign-in at `GET /api/collections/{c}/providers/{name}/start?redirect_uri=<that URL>`, receive `#code=…` (or `#error=…`) and exchange the code at `POST /api/collections/{c}/auth-with-exchange-code` within 60 seconds.
+4. Leave **Link to existing accounts by verified email** off unless the provider verifies every address it reports.
+
+<Screenshot name="settings-providers" alt="Settings, Sign-in providers in the admin UI, listing the configured providers." />
+
+Signed-in users add a provider to their account with `&link=true` on the start URL.
+
+The providers also appear on rackend's hosted sign-in page for apps that [sign in through rackend](/docs/guides/sign-in-for-apps/).
